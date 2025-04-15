@@ -1,0 +1,7 @@
+# Root ignore
+node_modules/
+.env
+*.iml
+.idea/
+.vscode/
+.DS_Store
