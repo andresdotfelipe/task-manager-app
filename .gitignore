@@ -1,9 +1,17 @@
-# Root ignore
+# Node
 node_modules/
+
+# Environment
 .env
-*.iml
+
+# IDEs and Editors
 .idea/
 .vscode/
+*.iml
+
+# OS
 .DS_Store
+
+# Logs and Temp files
 *.log
 *.tmp
