@@ -11,6 +11,7 @@ import com.example.taskmanager.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -37,13 +38,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public AuthResponse authenticate(AuthenticationRequest request) {
+    public AuthResponse login(AuthenticationRequest request) {
         authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(
                     request.getEmail(), request.getPassword()
             )
         );
-        String token = jwtService.generateToken(request.getEmail());
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        String token = jwtService.generateToken(user.getEmail());
         return new AuthResponse(token);
     }
 }

@@ -6,5 +6,5 @@ import com.example.taskmanager.dto.RegisterRequest;
 
 public interface AuthenticationService {
     AuthResponse register(RegisterRequest request);
-    AuthResponse authenticate(AuthenticationRequest request);
+    AuthResponse login(AuthenticationRequest request);
 }

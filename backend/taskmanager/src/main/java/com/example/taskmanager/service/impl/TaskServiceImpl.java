@@ -30,39 +30,43 @@ public class TaskServiceImpl implements TaskService {
         Task task = Task.builder()
                 .title(request.title())
                 .description(request.description())
-                .completed(request.completed())
+                .status(request.status())
                 .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
+                .dueDate(request.dueDate())
                 .user(user)
                 .build();
-        return taskMapper.toResponse(taskRepository.save(task));
+        return taskMapper.toDto(taskRepository.save(task));
     }
 
     @Override
-    public List<TaskResponse> getTasksForUser(String userEmail) {
+    public List<TaskResponse> getUserTasks(String userEmail) {
         User user = getUserByEmail(userEmail);
         return taskMapper.toResponseList(taskRepository.findByUserId(user.getId()));
     }
 
     @Override
-    public TaskResponse updateTask(Long id, TaskRequest request, String userEmail) {
-        Task task = getTaskByIdAndUser(id, userEmail);
-        task.setTitle(request.title());
-        task.setDescription(request.description());
-        task.setCompleted(request.completed());
-        task.setUpdatedAt(LocalDateTime.now());
-        return taskMapper.toResponse(taskRepository.save(task));
+    public TaskResponse getTaskById(Long taskId, String userEmail) {
+        return taskMapper.toDto(getTaskByIdAndUser(taskId, userEmail));
     }
 
     @Override
-    public void deleteTask(Long id, String userEmail) {
-        Task task = getTaskByIdAndUser(id, userEmail);
+    public TaskResponse updateTask(Long taskId, TaskRequest request, String userEmail) {
+        Task task = getTaskByIdAndUser(taskId, userEmail);
+        task.setTitle(request.title());
+        task.setDescription(request.description());
+        task.setStatus(request.status());
+        return taskMapper.toDto(taskRepository.save(task));
+    }
+
+    @Override
+    public void deleteTask(Long taskId, String userEmail) {
+        Task task = getTaskByIdAndUser(taskId, userEmail);
         taskRepository.delete(task);
     }
 
-    private Task getTaskByIdAndUser(Long id, String userEmail) {
+    private Task getTaskByIdAndUser(Long taskId, String userEmail) {
         User user = getUserByEmail(userEmail);
-        return taskRepository.findById(id)
+        return taskRepository.findById(taskId)
                 .filter(task -> task.getUser().getId().equals(user.getId()))
                 .orElseThrow(() -> new NoSuchElementException("Task not found or not authorized"));
     }

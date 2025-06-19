@@ -23,11 +23,12 @@ public class Task {
 
     private String description;
 
-    private boolean completed;
+    @Enumerated(EnumType.STRING)
+    private TaskStatus status;
 
     private LocalDateTime createdAt;
 
-    private LocalDateTime updatedAt;
+    private LocalDateTime dueDate;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)

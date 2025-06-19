@@ -2,6 +2,7 @@ package com.example.taskmanager.service.impl;
 
 import com.example.taskmanager.dto.UserDto;
 import com.example.taskmanager.entity.User;
+import com.example.taskmanager.entity.UserRole;
 import com.example.taskmanager.mapper.UserMapper;
 import com.example.taskmanager.repository.UserRepository;
 import com.example.taskmanager.service.UserService;
@@ -33,6 +34,14 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
         return userMapper.toDto(user);
+    }
+
+    @Override
+    public void promoteToAdmin(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+        user.setRole(UserRole.ADMIN);
+        userRepository.save(user);
     }
 
     @Override
