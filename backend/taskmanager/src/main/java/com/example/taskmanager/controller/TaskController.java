@@ -35,6 +35,16 @@ public class TaskController {
         return ResponseEntity.ok(taskService.getTaskById(id, user.getUsername()));
     }
 
+    @GetMapping("/filter")
+    public ResponseEntity<List<TaskResponse>> filterTasks(
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String sort,
+            @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        return ResponseEntity.ok(taskService.filterTasks(userDetails.getUsername(), search, status, sort));
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<TaskResponse> updateTask(@PathVariable Long id, TaskRequest request, @AuthenticationPrincipal UserDetails user) {
         return ResponseEntity.ok(taskService.updateTask(id, request, user.getUsername()));

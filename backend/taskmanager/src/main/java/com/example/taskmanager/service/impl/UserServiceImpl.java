@@ -4,9 +4,11 @@ import com.example.taskmanager.dto.UserDto;
 import com.example.taskmanager.entity.User;
 import com.example.taskmanager.entity.UserRole;
 import com.example.taskmanager.mapper.UserMapper;
+import com.example.taskmanager.repository.TaskRepository;
 import com.example.taskmanager.repository.UserRepository;
 import com.example.taskmanager.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,7 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final TaskRepository taskRepository;
     private final UserMapper userMapper;
 
     @Override
@@ -44,11 +47,13 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
+    @Transactional
     @Override
     public void deleteUser(Long id) {
         if (!userRepository.existsById(id)) {
             throw new EntityNotFoundException("User not found");
         }
+        taskRepository.deleteByUserId(id);
         userRepository.deleteById(id);
     }
 }
